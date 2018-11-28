@@ -1,9 +1,10 @@
 var todoApp = angular.module("todoApp", ['ngResource']);
-
+var reqUrlPrefix = '/:controller/:action';
 todoApp.controller("ToDoCtrl", function (
     $scope, 
     $resource, 
-    TodoService) {
+    TodoService,
+    MallService) {
     $scope.todo = {};
 
     $scope.incompleteCount = function () {
@@ -35,6 +36,18 @@ todoApp.controller("ToDoCtrl", function (
             }
           })
     };
+    $scope.delete = function(itemsId){
+        TodoService.itemsDelete({id:itemsId},function (result) {
+            if(result){
+                console.log(result.data);
+            }
+          });
+        MallService.queryOne({productId:2},function(result){
+            if(result){
+                console.log(result.data);
+            }
+        })
+    };
     // 初始化方法
     $scope.$watch('$viewContentLoaded', function() {
         $scope.init();
@@ -43,8 +56,17 @@ todoApp.controller("ToDoCtrl", function (
 });
 
 todoApp.factory('TodoService', ['$resource', function ($resource) {
-    return $resource('/weiLogin/queryAll', 
-    {}, 
-    {queryAll: {method: 'GET',isArray: false, cache: false}}
-);
+    return $resource('', { controller: 'weiLogin' }, {
+        queryAll: { url: reqUrlPrefix, params: { action: 'queryAll' }, method: 'GET', isArray: false, cache: false,headers: {Accept: 'application/json'}},
+        itemsDelete: { url: reqUrlPrefix, params: { action: 'deleteById' }, method: 'POST', isArray: false, cache: false,headers: {Accept: 'application/json'}},
+    });
+}]);
+
+todoApp.factory('MallService', ['$resource', function($resource){
+    return $resource('/weiProduct/productDetail/:productId',
+        {},
+        {
+            queryOne: {method: 'POST', headers: {Accept: 'application/json'} }
+        }
+    );
 }]);

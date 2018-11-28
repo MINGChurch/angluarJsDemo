@@ -38,7 +38,9 @@
         <tr ng-repeat="item in todo.items">
             <td style="width:500px">{{item.action}}</td>
             <td style="width:500px"><input type="checkbox" ng-model="item.done"/></td>
-            <td >{{item.done}}</td>
+            <td style="width:500px">{{item.done}}</td>
+            <td><input type="button" class="btn btn-info" value="编辑"></td>
+            <td><input type="button" class="btn btn-danger" value="删除" ng-click="delete(item.id);"></td>
         </tr>
         </tbody>
     </table>
